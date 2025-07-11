@@ -14,12 +14,12 @@ class ContactDetector
 		ContactDetector(const int seed) : seed_(seed) {}
 		~ContactDetector() = default;
 		indices_type run(const Coordinate& coordinate,
-			const float cutoff, const std::size_t max_contact
+			const float cutoff, const std::size_t max_contact,
 			const std::unordered_set<std::size_t>& black_list) const;
 
 	private:
 		indices_type detect_contact_pairs(const Coordinate& coordinate,
-			const std::unordered_set<std::size_t>& black_list, const float cutoff,) const;
+			const float cutoff, const std::unordered_set<std::size_t>& black_list) const;
 
 	private:
 		int seed_;

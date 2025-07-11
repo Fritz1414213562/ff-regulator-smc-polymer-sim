@@ -8,7 +8,7 @@ ContactDetector::indices_type ContactDetector::run(
 	const std::unordered_set<std::size_t>& black_list) const
 {
 	const ContactDetector::indices_type& contact_pair_list
-		= detect_contact_pairs(coordinate, cutoff);
+		= detect_contact_pairs(coordinate, cutoff, black_list);
 	if (contact_pair_list.empty() or (contact_pair_list.size() <= max_contact))
 		return contact_pair_list;
 
