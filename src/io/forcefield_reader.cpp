@@ -1,6 +1,7 @@
 #include "forcefield_reader.hpp"
+#include "src/util/utility.hpp"
 
-std::unordered_set<std::size_t> ForceFieldReader::read(const std::string& filename)
+std::unordered_set<std::size_t> ForceFieldReader::read(const std::string& filename) const
 {
 	const toml::value& data = toml::parse(filename);
 	const auto& ff = toml::find(data, "forcefields").at(0);
