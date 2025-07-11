@@ -18,10 +18,10 @@ void ForceFieldWriter::dump(
 		                         << std::setw(6) << contact_pairs[1] << ","
 		                         << std::setw(6) << contact_pairs[2] << ","
 		                         << std::setw(6) << contact_pairs[3] << "], ";
-		ofs << "v0 = "           << std::setprecision(3) <<     r0
-			<< ", bond_k = "     << std::setprecision(3) << bond_k
-			<< ", theta0 = "     << std::setprecision(3) << theta0
-			<< ", dihedral_k = " << std::setprecision(3) << dihedral_k << "},"
+		ofs << "v0 = "           << std::fixed << std::setprecision(3) <<     r0
+			<< ", bond_k = "     << std::fixed << std::setprecision(3) << bond_k
+			<< ", theta0 = "     << std::fixed << std::setprecision(3) << theta0
+			<< ", dihedral_k = " << std::fixed << std::setprecision(3) << dihedral_k << "},"
 			<< std::endl;
 	}
 	ofs << "]" << std::endl;
