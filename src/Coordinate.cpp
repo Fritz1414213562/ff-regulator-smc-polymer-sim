@@ -1,5 +1,6 @@
 #include "Coordinate.hpp"
 #include <cmath>
+#include <stdexcept>
 
 Coordinate::Coordinate(const std::array<std::vector<float>, 3>& xyz) : xyz_(xyz)
 {
