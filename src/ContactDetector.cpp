@@ -44,7 +44,11 @@ ContactDetector::indices_type ContactDetector::detect_contact_pairs(
 		{
 			if (black_list.find(jdx) != black_list.end()) continue;
 			if (coordinate.distance(idx, jdx) < cutoff)
+			{
 				retval.push_back({idx, idx + 1, jdx, jdx + 1});
+				black_list.insert(idx);
+				black_list.insert(jdx);
+			}
 		}
 	}
 	return retval;
