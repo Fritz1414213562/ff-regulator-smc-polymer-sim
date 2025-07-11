@@ -14,6 +14,7 @@ add_library(mcfflib STATIC
 	)
 target_link_libraries(mcfflib PRIVATE
 #	Boost::program_options)
+	toml11::toml11
 	boost_program_options)
 add_executable(mcff main.cpp)
 set_target_properties(mcff PROPERTIES
@@ -23,6 +24,7 @@ target_include_directories(mcff PRIVATE boost_program_options)
 target_link_libraries(mcff PRIVATE
 #	Boost::program_options
 	boost_program_options
+	toml11::toml11
 	mcfflib
 	)
 

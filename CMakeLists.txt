@@ -13,6 +13,8 @@ find_package(Boost REQUIRED)
 message(STATUS "Boost include path : ${Boost_INCLUDE_DIR}")
 message(STATUS "Boost library path : ${Boost_LIBRARY}")
 
+set(TOML11_PRECOMPILE ON)
+
 set(MCFF_WARNING_FLAGS "")
 check_cxx_compiler_flag("-Wall" MCFF_COMPILER_HAS_WALL)
 if(MCFF_COMPILER_HAS_WALL)
@@ -60,4 +62,5 @@ elseif(CMAKE_CXX_COMPILER_ID MATCHES "NVHPC")
 	link_libraries(stdc++fs)
 endif()
 
+add_subdirectory(toml11)
 add_subdirectory(src)
