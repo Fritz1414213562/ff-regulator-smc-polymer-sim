@@ -9,7 +9,7 @@ class Input {
 	public:
 		Input(int argc, char *argv[]);
 		std::string trajectory_name() const { return trajectory_name_; }
-		std::string template_name()   const { return template_name_; }
+		std::string base_ff_name()    const { return base_ff_name_; }
 		std::string output_name()     const { return output_name_; }
 		float       bond_k()          const { return bond_k_; }
 		float       dihedral_k()      const { return dihedral_k_; }
@@ -20,7 +20,7 @@ class Input {
 		std::size_t max_contact()     const { return max_contact_; }
 	private:
 		std::string trajectory_name_;
-		std::string template_name_;
+		std::string base_ff_name_;
 		std::string output_name_;
 		float       bond_k_;
 		float       dihedral_k_;

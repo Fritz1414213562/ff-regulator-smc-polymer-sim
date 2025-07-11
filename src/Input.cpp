@@ -9,7 +9,7 @@ Input::Input(int argc, char *argv[])
 	desc.add_options()
 		("help", "produce help message")
 		("traj, j",     boost_po::value<std::string>(), "path to an input trajectory file")
-		("toml, m",     boost_po::value<std::string>(), "path to a template forcefield file")
+		("toml, m",     boost_po::value<std::string>(), "path to a toml forcefield file")
 		("output, o",   boost_po::value<std::string>(), "path to output")
 		("cutoff, c",   boost_po::value<float>()->default_value(120.0),    "cutoff length")
 		("bond, b",     boost_po::value<float>()->default_value(100.0),    "bond strength")
@@ -35,7 +35,7 @@ Input::Input(int argc, char *argv[])
 		std::exit(1);
 	}
 	this->trajectory_name_ = vm["traj"].as<std::string>();
-	this->template_name_   = vm["toml"].as<std::string>();
+	this->base_ff_name_    = vm["toml"].as<std::string>();
 	this->output_name_     = vm["output"].as<std::string>();
 	this->cutoff_          = vm["cutoff"].as<float>();
 	this->bond_k_          = vm["bond"].as<float>();
