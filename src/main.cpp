@@ -20,11 +20,12 @@ int main(int argc, char *argv[]) {
 	Coordinate         coord = dcd_parser.read(input.trajectory_name(), -1);
 	// read black list
 	ForceFieldReader reader = ForceFieldReader();
-	const std::unordered_set<std::size_t>& black_list = reader.read(input.base_ff_name());
+	const std::vector<std::array<std::size_t, 4>>& previous_pairs
+		= reader.read(input.base_ff_name());
 	// define contact pairs
 	ContactDetector detector = ContactDetector(input.seed());
 	indices_type indices_vec
-		= detector.run(coord, input.cutoff(), input.max_contact(), black_list);
+		= detector.run(coord, input.cutoff(), input.max_contact(), previous_pairs);
 	// dump the segment-parallelization parameters to the output file
 	ForceFieldWriter writer = ForceFieldWriter();
 	writer.dump(input.output_name(),

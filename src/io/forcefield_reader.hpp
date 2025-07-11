@@ -5,15 +5,17 @@
 #include <iostream>
 #include <toml.hpp>
 #include <string>
-#include <unordered_set>
+#include <vector>
+#include <array>
 
 class ForceFieldReader
 {
+	using indices_type = std::vector<std::array<std::size_t, 4>>;
 	public:
 		ForceFieldReader() = default;
 		~ForceFieldReader() = default;
 
-		std::unordered_set<std::size_t> read(const std::string& filename) const;
+		indices_type read(const std::string& filename) const;
 };
 
 #endif // MONTE_CARLO_FF_REGULATOR_FORCE_FIELD_READER_HPP

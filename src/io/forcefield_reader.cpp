@@ -1,11 +1,11 @@
 #include "forcefield_reader.hpp"
 #include "src/util/utility.hpp"
 
-std::unordered_set<std::size_t> ForceFieldReader::read(const std::string& filename) const
+ForceFieldReader::indices_type ForceFieldReader::read(const std::string& filename) const
 {
 	const toml::value& data = toml::parse(filename);
 	const auto& ff = toml::find(data, "forcefields").at(0);
-	std::unordered_set<std::size_t> retval;
+	ForceFieldReader::indices_type retval;
 	if (ff.contains("local"))
 	{
 		const auto& locals = toml::find(ff, "local").as_array();
@@ -21,8 +21,7 @@ std::unordered_set<std::size_t> ForceFieldReader::read(const std::string& filena
 				{
 					const auto& indices = Utility::find_parameter<std::array<std::size_t, 4>>(
 						param, env, "indices");
-					retval.insert(indices[0]);
-					retval.insert(indices[2]);
+					retval.push_back(indices);
 				}
 			}
 		}

@@ -4,7 +4,6 @@
 #include "Coordinate.hpp"
 #include <vector>
 #include <array>
-#include <unordered_set>
 
 class ContactDetector
 {
@@ -15,11 +14,11 @@ class ContactDetector
 		~ContactDetector() = default;
 		indices_type run(const Coordinate& coordinate,
 			const float cutoff, const std::size_t max_contact,
-			const std::unordered_set<std::size_t>& black_list) const;
+			const indices_type& previous_pairs) const;
 
 	private:
 		indices_type detect_contact_pairs(const Coordinate& coordinate,
-			const float cutoff, const std::unordered_set<std::size_t>& black_list) const;
+			const float cutoff, const indices_type& previous_pairs) const;
 
 	private:
 		int seed_;
