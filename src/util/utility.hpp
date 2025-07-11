@@ -1,6 +1,7 @@
 #ifndef MONTE_CARLO_FF_REGULATOR_UTILITY_HPP
 #define MONTE_CARLO_FF_REGULATOR_UTILITY_HPP
 #include <random>
+#include <cstring>
 
 namespace Utility
 {
