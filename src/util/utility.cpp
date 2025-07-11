@@ -3,6 +3,7 @@
 #include <memory>
 #include <random>
 #include <unordered_map>
+#include <stdexcept>
 
 namespace Utility
 {
