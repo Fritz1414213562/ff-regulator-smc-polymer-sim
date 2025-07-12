@@ -6,7 +6,7 @@ void ForceFieldWriter::dump(
 	const std::string& filename, const ForceFieldWriter::indices_type& indices_vec,
 	const float bond_k, const float r0,	const float dihedral_k, const float theta0)
 {
-	std::ofstream ofs(filename, std::ios::app);
+	std::ofstream ofs(filename, std::ios::out);
 	ofs << "[[forcefields.local]]" << std::endl;
 	ofs << "interaction = 'BondLength'" << std::endl;
 	ofs << "potential   = 'SegmentParallelization'" << std::endl;
