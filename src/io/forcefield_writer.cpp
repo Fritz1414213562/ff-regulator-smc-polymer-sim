@@ -21,6 +21,8 @@ void ForceFieldWriter::dump(
 		ofs << "v0 = "           << std::fixed << std::setprecision(3) <<     r0
 			<< ", bond_k = "     << std::fixed << std::setprecision(3) << bond_k
 			<< ", theta0 = "     << std::fixed << std::setprecision(3) << theta0
+			<< ", phi0 = "       << std::fixed << std::setprecision(5) << phi0_
+			<< ", psi0 = "       << std::fixed << std::setprecision(5) << phi0_
 			<< ", dihedral_k = " << std::fixed << std::setprecision(3) << dihedral_k << "},"
 			<< std::endl;
 	}

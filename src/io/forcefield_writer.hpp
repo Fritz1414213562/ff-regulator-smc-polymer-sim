@@ -4,6 +4,7 @@
 #include <array>
 #include <vector>
 #include <fstream>
+#include <cmath>
 
 class ForceFieldWriter
 {
@@ -15,6 +16,9 @@ class ForceFieldWriter
 			const std::string& filename, const indices_type& indices_vec,
 			const float bond_k, const float r0,
 			const float dihedral_k, const float theta0);
+	private:
+		float phi0_ = std::acos(1.0) / 2.0;
+
 };
 
 #endif // MONTE_CARLO_FF_REGULATOR_FORCEFIELD_WRITER_HPP
