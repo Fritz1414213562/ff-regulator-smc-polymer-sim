@@ -14,6 +14,7 @@ class Coordinate
 		std::size_t&                  atom_num()       {return atom_num_;}
 	
 		float distance(const std::size_t idx, const std::size_t jdx) const;
+		float angle(const std::size_t idx, const std::size_t jdx, const std::size_t kdx) const;
 
 	private:
 		std::size_t atom_num_;
