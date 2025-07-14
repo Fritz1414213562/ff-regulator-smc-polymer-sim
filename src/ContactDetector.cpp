@@ -43,9 +43,10 @@ ContactDetector::indices_type ContactDetector::detect_contact_pairs(
 		for (std::size_t jdx = idx + 2; jdx < natom - 1; ++jdx)
 		{
 			if (black_list.find(jdx) != black_list.end()) continue;
-			if ((coordinate.distance(idx, jdx) < cutoff) and
-				(std::abs(coordinate.angle(idx + 1, idx, jdx) - phi0_) < phi_cutoff_) and
-				(std::abs(coordinate.angle(idx, jdx, jdx + 1) - phi0_) < phi_cutoff_))
+//			if ((coordinate.distance(idx, jdx) < cutoff) and
+//				(std::abs(coordinate.angle(idx + 1, idx, jdx) - phi0_) < phi_cutoff_) and
+//				(std::abs(coordinate.angle(idx, jdx, jdx + 1) - phi0_) < phi_cutoff_))
+			if (coordinate.distance(idx, jdx) < cutoff) 
 			{
 				retval.push_back({idx, idx + 1, jdx, jdx + 1});
 				black_list.insert(idx);
