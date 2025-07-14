@@ -44,8 +44,8 @@ ContactDetector::indices_type ContactDetector::detect_contact_pairs(
 		{
 			if (black_list.find(jdx) != black_list.end()) continue;
 			if ((coordinate.distance(idx, jdx) < cutoff) and
-				(coordinate.angle(idx + 1, idx, jdx) - phi0_ < phi_cutoff_) and
-				(coordinate.angle(idx, jdx, jdx + 1) - phi0_ < phi_cutoff_))
+				(std::abs(coordinate.angle(idx + 1, idx, jdx) - phi0_) < phi_cutoff_) and
+				(std::abs(coordinate.angle(idx, jdx, jdx + 1) - phi0_) < phi_cutoff_))
 			{
 				retval.push_back({idx, idx + 1, jdx, jdx + 1});
 				black_list.insert(idx);
