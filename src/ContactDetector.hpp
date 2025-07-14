@@ -23,8 +23,8 @@ class ContactDetector
 
 	private:
 		int seed_;
-		float phi0_ = std::acos(1.0) / 2.0;
-		float phi_cutoff_ = std::acos(1.0) / 18.0;
+		float phi0_ = std::acos(-1.0) / 2.0;
+		float phi_cutoff_ = std::acos(-1.0) / 18.0;
 };
 
 
