@@ -17,7 +17,7 @@ class ForceFieldWriter
 			const float bond_k, const float r0,
 			const float dihedral_k, const float theta0);
 	private:
-		float phi0_ = std::acos(1.0) / 2.0;
+		float phi0_ = std::acos(-1.0) / 2.0;
 
 };
 
