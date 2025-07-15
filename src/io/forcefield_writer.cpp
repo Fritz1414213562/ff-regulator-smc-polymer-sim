@@ -4,7 +4,8 @@
 
 void ForceFieldWriter::dump(
 	const std::string& filename, const ForceFieldWriter::indices_type& indices_vec,
-	const float bond_k, const float r0,	const float dihedral_k, const float theta0)
+	const float bond_k, const float r0,	const float dihedral_k,
+	const float phi0, const float theta0)
 {
 	std::ofstream ofs(filename, std::ios::out);
 	ofs << "[[forcefields.local]]" << std::endl;
@@ -21,7 +22,7 @@ void ForceFieldWriter::dump(
 		ofs << "v0 = "           << std::fixed << std::setprecision(3) <<     r0
 			<< ", bond_k = "     << std::fixed << std::setprecision(3) << bond_k
 			<< ", theta0 = "     << std::fixed << std::setprecision(3) << theta0
-			<< ", phi0 = "       << std::fixed << std::setprecision(5) << phi0_
+			<< ", phi0 = "       << std::fixed << std::setprecision(5) << phi0
 		//	<< ", psi0 = "       << std::fixed << std::setprecision(5) << phi0_
 			<< ", dihedral_k = " << std::fixed << std::setprecision(3) << dihedral_k << "},"
 			<< std::endl;
