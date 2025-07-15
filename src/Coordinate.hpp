@@ -15,6 +15,8 @@ class Coordinate
 	
 		float distance(const std::size_t idx, const std::size_t jdx) const;
 		float angle(const std::size_t idx, const std::size_t jdx, const std::size_t kdx) const;
+		float dihedral(const std::size_t idx, const std::size_t jdx,
+			const std::size_t kdx, const std::size_t ldx) const;
 
 	private:
 		std::size_t atom_num_;

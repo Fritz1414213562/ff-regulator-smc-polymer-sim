@@ -1,4 +1,5 @@
 #include "Coordinate.hpp"
+#include "src/util/utility.hpp"
 #include <cmath>
 #include <stdexcept>
 
@@ -30,4 +31,22 @@ float Coordinate::angle(const std::size_t idx, const std::size_t jdx, const std:
 	const float drjk = distance(kdx, jdx);
 	const float cost = (dxij * dxjk + dyij * dyjk + dzij * dzjk) / (drij * drjk);
 	return std::acos(cost);
+}
+
+float Coordinate::dihedral(const std::size_t idx, const std::size_t jdx,
+	const std::size_t kdx, const std::size_t ldx) const
+{
+	const std::array<float, 3> dvij =
+		{xyz_[0][jdx] - xyz_[0][idx], xyz_[1][jdx] - xyz_[1][idx], xyz_[2][jdx] - xyz_[2][idx]};
+	const std::array<float, 3> dvjk =
+		{xyz_[0][kdx] - xyz_[0][jdx], xyz_[1][kdx] - xyz_[1][jdx], xyz_[2][kdx] - xyz_[2][jdx]};
+	const std::array<float, 3> dvkl =
+		{xyz_[0][ldx] - xyz_[0][kdx], xyz_[1][ldx] - xyz_[1][kdx], xyz_[2][ldx] - xyz_[2][kdx]};
+	const float drjk = distance(kdx, jdx);
+	const std::array<float, 3> nijk  = Utility::cross_product(dvij, dvjk);
+	const std::array<float, 3> njkl  = Utility::cross_product(dvjk, dvkl);
+	const std::array<float, 3> nijkl = Utility::cross_product(nijk, njkl);
+	const float sint = Utility::inner_product(nijkl, dvjk);
+	const float cost = drjk * Utility::inner_product(nijk, njkl);
+	return std::atan2(sint, cost);
 }
