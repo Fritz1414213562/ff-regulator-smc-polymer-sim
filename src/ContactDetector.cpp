@@ -2,6 +2,76 @@
 #include "src/util/utility.hpp"
 #include <random>
 #include <unordered_set>
+#include <algorithm>
+
+ContactDetector::indices_type ContactDetector::run_mmc(
+	const Coordinate& coordinate,
+	const float cutoff, const float chi,
+	const ContactDetector::indices_type& previous_pairs) const
+{
+	std::unordered_set<std::size_t> black_list;
+	for (const auto& pair : previous_pairs)
+	{
+		black_list.insert(pair[0]);
+		black_list.insert(pair[2]);
+	}
+
+	ContactDetector::indices_type retval;
+	std::mt19937_64 engine(seed_);
+	std::uniform_real_distribution<> dist(0.0, 1.0);
+	// try to delete contact pair
+	for (const auto& pair : previous_pairs)
+	{
+		const float dU = - calculate_contact_energy(coordinate, pair) - chi;
+		const float accept_rate = std::min(1.0f, std::exp(-dU));
+		if (dist(engine) > accept_rate)
+		{
+			retval.push_back(pair);
+		}
+	}
+
+	// try to append contact pair
+	const std::size_t& natom = coordinate.atom_num();
+	for (std::size_t idx = 0; idx < natom - 3; ++idx)
+	{
+		if (black_list.find(idx) != black_list.end()) continue;
+		for (std::size_t jdx = idx + 2; jdx < natom - 1; ++jdx)
+		{
+			if (black_list.find(jdx) != black_list.end()) continue;
+			if (coordinate.distance(idx, jdx) < cutoff) 
+			{
+				const std::array<std::size_t, 4> newpair = {idx, idx + 1, jdx, jdx + 1};
+				const float dU = calculate_contact_energy(coordinate, newpair) + chi;
+				const float accept_rate = std::min(1.0f, std::exp(-dU));
+				if (dist(engine) <= accept_rate)
+				{
+					retval.push_back(newpair);
+					black_list.insert(idx);
+					black_list.insert(jdx);
+				}
+			}
+		}
+	}
+	return retval;
+}
+
+float ContactDetector::calculate_contact_energy(const Coordinate& coordinate,
+	const std::array<std::size_t, 4>& indices) const
+{
+	const std::size_t& idx = indices[0];
+	const std::size_t& jdx = indices[1];
+	const std::size_t& kdx = indices[2];
+	const std::size_t& ldx = indices[3];
+	const float r = coordinate.distance(idx, kdx);
+	const float phi
+		= coordinate.angle(jdx, idx, kdx)
+		- coordinate.angle(idx, kdx, ldx);
+	const float theta = coordinate.dihedral(jdx, idx, kdx, ldx);
+	const float Ub = (r < r0_) ? 0.0 : bond_k_ * (r - r0_) * (r - r0_);
+	const float Ua = angle_k_ * (1.0 - std::cos(2 * (phi - phi0_)));
+	const float Ud = angle_k_ * (1.0 - std::cos(2 * (theta - theta0_)));
+	return Ua + Ub + Ud;
+}
 
 ContactDetector::indices_type ContactDetector::run(
 	const Coordinate& coordinate,
