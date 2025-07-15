@@ -7,6 +7,7 @@
 #include <vector>
 #include <array>
 #include <unordered_set>
+#include <fstream>
 
 
 int main(int argc, char *argv[]) {
@@ -23,13 +24,17 @@ int main(int argc, char *argv[]) {
 	const std::vector<std::array<std::size_t, 4>>& previous_pairs
 		= reader.read(input.base_ff_name());
 	// define contact pairs
-	ContactDetector detector = ContactDetector(input.seed());
+	ContactDetector detector = ContactDetector(
+		input.seed(), input.bond_k(), input.dihedral_k(), input.r0(),
+		input.phi0(), input.theta0());
+
 	indices_type indices_vec
-		= detector.run(coord, input.cutoff(), input.max_contact(), previous_pairs);
+		= detector.run_mmc(coord, input.cutoff(), input.chi(), previous_pairs);
+
 	// dump the segment-parallelization parameters to the output file
 	ForceFieldWriter writer = ForceFieldWriter();
-	writer.dump(input.output_name(),
-		indices_vec, input.bond_k(), input.r0(), input.dihedral_k(), input.theta0());
+	writer.dump(input.output_name(), indices_vec,
+		input.bond_k(), input.r0(), input.dihedral_k(), input.phi0(), input.theta0());
 
 	return 0;
 }
