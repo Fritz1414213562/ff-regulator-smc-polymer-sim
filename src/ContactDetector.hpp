@@ -4,21 +4,22 @@
 #include "Coordinate.hpp"
 #include <vector>
 #include <array>
+#include <tuple>
 #include <cmath>
 
 class ContactDetector
 {
 	using indices_type = std::vector<std::array<std::size_t, 4>>;
+	using param_type = std::vector<float>;
+	using result_type = std::tuple<indices_type, param_type, param_type>;
 
 	public:
 		ContactDetector(const int seed,
-			const float bond_k, const float angle_k,
-			const float r0, const float phi0, const float theta0)
-			: seed_(seed), bond_k_(bond_k), angle_k_(angle_k),
-			  r0_(r0), phi0_(phi0), theta0_(theta0) {}
+			const float bond_k, const float angle_k, const float r0, const float sigma)
+			: seed_(seed), bond_k_(bond_k), angle_k_(angle_k), r0_(r0), sigma_(sigma) {}
 		ContactDetector(const int seed) : seed_(seed) {}
 		~ContactDetector() = default;
-		indices_type run_mmc(const Coordinate& coordinate,
+		result_type run_mmc(const Coordinate& coordinate,
 			const float cutoff, const float chi,
 			const indices_type& previous_pairs) const;
 		indices_type run(const Coordinate& coordinate,
@@ -38,6 +39,8 @@ class ContactDetector
 		float r0_;
 		float phi0_;
 		float theta0_;
+		float sigma_;
+		float pi_ = std::acos(-1.0);
 };
 
 

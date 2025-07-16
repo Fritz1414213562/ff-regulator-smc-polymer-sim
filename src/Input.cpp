@@ -1,5 +1,6 @@
 #include "Input.hpp"
 #include <random>
+#include <cmath>
 
 namespace boost_po = boost::program_options;
 
@@ -12,11 +13,10 @@ Input::Input(int argc, char *argv[])
 		("toml, m",     boost_po::value<std::string>(), "path to a toml forcefield file")
 		("output, o",   boost_po::value<std::string>(), "path to output")
 		("cutoff, c",   boost_po::value<float>()->default_value(120.0), "cutoff length")
-		("bond, b",     boost_po::value<float>()->default_value(100.0), "bond strength")
+		("bond, b",     boost_po::value<float>()->default_value(1.0), "bond strength")
 		("r0, r",       boost_po::value<float>()->default_value( 10.0), "native bond length")
-		("dihedral, d", boost_po::value<float>()->default_value(  1.0), "dihedral strength")
-		("phi0, p",     boost_po::value<float>()->default_value(  0.0), "native torsion angle")
-		("theta0, t",   boost_po::value<float>()->default_value(  0.0), "native torsion angle")
+		("dihedral, d", boost_po::value<float>()->default_value(0.174533), "dihedral strength")
+		("sigma, d",    boost_po::value<float>()->default_value(10.0), "bond width")
 		("seed, s",     boost_po::value<int>()->default_value(-1),      "random seed")
 		("chi, k",      boost_po::value<float>()->default_value(  0.0), "chemical potential");
 	boost_po::variables_map vm;
@@ -42,8 +42,6 @@ Input::Input(int argc, char *argv[])
 	this->bond_k_          = vm["bond"].as<float>();
 	this->r0_              = vm["r0"].as<float>();
 	this->dihedral_k_      = vm["dihedral"].as<float>();
-	this->phi0_            = vm["phi0"].as<float>();
-	this->theta0_          = vm["theta0"].as<float>();
 	if (vm["seed"].as<int>() < 0)
 	{
 		std::random_device rng;
@@ -51,4 +49,5 @@ Input::Input(int argc, char *argv[])
 	}
 	else this->seed_       = vm["seed"].as<int>();
 	this->chi_             = vm["chi"].as<float>();
+	this->sigma_           = vm["sigma"].as<float>();
 }

@@ -4,7 +4,7 @@
 #include <unordered_set>
 #include <algorithm>
 
-ContactDetector::indices_type ContactDetector::run_mmc(
+ContactDetector::result_type ContactDetector::run_mmc(
 	const Coordinate& coordinate,
 	const float cutoff, const float chi,
 	const ContactDetector::indices_type& previous_pairs) const
@@ -16,7 +16,10 @@ ContactDetector::indices_type ContactDetector::run_mmc(
 		black_list.insert(pair[2]);
 	}
 
-	ContactDetector::indices_type retval;
+	ContactDetector::indices_type indices_vec;
+	ContactDetector::param_type   theta0s;
+	ContactDetector::param_type   phi0s;
+
 	std::mt19937_64 engine(seed_);
 	std::uniform_real_distribution<> dist(0.0, 1.0);
 	// try to delete contact pair
@@ -26,7 +29,15 @@ ContactDetector::indices_type ContactDetector::run_mmc(
 		const float accept_rate = std::min(1.0f, std::exp(-dU));
 		if (dist(engine) > accept_rate)
 		{
-			retval.push_back(pair);
+			const float theta = coordinate.dihedral(pair[1], pair[0], pair[2], pair[3]);
+			const float phi
+				= coordinate.angle(pair[1], pair[0], pair[2])
+				- coordinate.angle(pair[0], pair[2], pair[3]);
+			indices_vec.push_back(pair);
+			if (theta > -0.5*pi_ && theta < 0.5*pi_) theta0s.push_back(0.0f);
+			else theta0s.push_back(pi_);
+			if (phi > -0.5*pi_ && phi < 0.5*pi_) phi0s.push_back(0.0f);
+			else phi0s.push_back(pi_);
 		}
 	}
 
@@ -45,14 +56,22 @@ ContactDetector::indices_type ContactDetector::run_mmc(
 				const float accept_rate = std::min(1.0f, std::exp(-dU));
 				if (dist(engine) <= accept_rate)
 				{
-					retval.push_back(newpair);
+					const float theta = coordinate.dihedral(idx + 1, idx, jdx, jdx + 1);
+					const float phi
+						= coordinate.angle(idx + 1, idx, jdx)
+						- coordinate.angle(idx, jdx, jdx + 1);
+					if (theta > -0.5*pi_ && theta < 0.5*pi_) theta0s.push_back(0.0f);
+					else theta0s.push_back(pi_);
+					if (phi > -0.5*pi_ && phi < 0.5*pi_) phi0s.push_back(0.0f);
+					else phi0s.push_back(pi_);
+					indices_vec.push_back(newpair);
 					black_list.insert(idx);
 					black_list.insert(jdx);
 				}
 			}
 		}
 	}
-	return retval;
+	return std::make_tuple(indices_vec, theta0s, phi0s);
 }
 
 float ContactDetector::calculate_contact_energy(const Coordinate& coordinate,
@@ -67,10 +86,26 @@ float ContactDetector::calculate_contact_energy(const Coordinate& coordinate,
 		= coordinate.angle(jdx, idx, kdx)
 		- coordinate.angle(idx, kdx, ldx);
 	const float theta = coordinate.dihedral(jdx, idx, kdx, ldx);
-	const float Ub = (r < r0_) ? 0.0 : bond_k_ * (r - r0_) * (r - r0_);
-	const float Ua = angle_k_ * (1.0 - std::cos(2 * (phi - phi0_)));
-	const float Ud = angle_k_ * (1.0 - std::cos(2 * (theta - theta0_)));
-	return Ua + Ub + Ud;
+//	const float Ub = (r < r0_) ? 0.0 : bond_k_ * (r - r0_) * (r - r0_);
+//	const float Ua = angle_k_ * (1.0 - std::cos(2 * (phi - phi0_)));
+//	const float Ud = angle_k_ * (1.0 - std::cos(2 * (theta - theta0_)));
+//	return Ua + Ub + Ud;
+	const float theta0 = (theta > -0.5*pi_ && theta < 0.5*pi_) ? 0.0f : pi_;
+	const float phi0   = (phi   > -0.5*pi_ && phi   < 0.5*pi_) ? 0.0f : pi_;
+	const float dr = r - r0_;
+	const float fr = std::exp(- dr * dr / (2 * sigma_ * sigma_));
+	const float K = pi_ / (2 * angle_k_);
+	const float dphi = K * (phi - phi0);
+	const float dtheta = K * (theta - theta0);
+	const float rect0t = (dtheta > -pi_) && (dtheta < pi_) ? 1.0f : 0.0f;
+	const float rect1t = (dtheta > -pi_/2) && (dtheta < pi_/2) ? 1.0f : 0.0f;
+	const float rect0p = (dphi > -pi_) && (dphi < pi_) ? 1.0f : 0.0f;
+	const float rect1p = (dphi > -pi_/2) && (dphi < pi_/2) ? 1.0f : 0.0f;
+	const float g1 = 1.0f - std::cos(dtheta) * std::cos(dtheta);
+	const float g2 = 1.0f - std::cos(dphi) * std::cos(dphi);
+	const float gtheta = std::max(g1 * rect0t, rect1t);
+	const float gphi   = std::max(g2 * rect0p, rect1p);
+	return -bond_k_ * fr * gtheta * gphi;
 }
 
 ContactDetector::indices_type ContactDetector::run(

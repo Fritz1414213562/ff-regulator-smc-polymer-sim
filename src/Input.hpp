@@ -14,11 +14,10 @@ class Input {
 		float       bond_k()          const { return bond_k_; }
 		float       dihedral_k()      const { return dihedral_k_; }
 		float       r0()              const { return r0_; }
-		float       phi0()            const { return phi0_; }
-		float       theta0()          const { return theta0_; }
 		float       cutoff()          const { return cutoff_; }
 		int         seed()            const { return seed_; }
 		float       chi()             const { return chi_; }
+		float       sigma()           const { return sigma_; }
 	private:
 		std::string trajectory_name_;
 		std::string base_ff_name_;
@@ -26,11 +25,10 @@ class Input {
 		float       bond_k_;
 		float       dihedral_k_;
 		float       r0_;
-		float       phi0_;
-		float       theta0_;
 		float       cutoff_;
 		int         seed_;
 		float       chi_;
+		float       sigma_;
 };
 
 #endif // MONTE_CARLO_FF_REGULATOR_INPUT_HPP
