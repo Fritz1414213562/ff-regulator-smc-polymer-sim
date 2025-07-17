@@ -52,6 +52,22 @@ T find_parameter(const toml::value& params, const toml::value& env,
     return toml::get<T>(p);
 }
 
+template<typename T>
+T inner_product(const std::array<T, 3>& lhs, const std::array<T, 3>& rhs)
+{
+	return lhs[0] * rhs[0] + lhs[1] * rhs[1] + lhs[2] * rhs[2];
+}
+
+template<typename T>
+std::array<T, 3> cross_product(const std::array<T, 3>& lhs, const std::array<T, 3>& rhs)
+{
+	return std::array<T, 3>({
+		lhs[1] * rhs[2] - lhs[2] * rhs[1],
+		lhs[2] * rhs[0] - lhs[0] * rhs[2],
+		lhs[0] * rhs[1] - lhs[1] * rhs[0],
+	});
+}
+
 std::vector<std::size_t> fisher_yates_random_choice(
 	const std::size_t size, std::size_t lower, std::size_t upper, std::mt19937& engine);
 
