@@ -7,11 +7,14 @@
 #include <vector>
 #include <array>
 #include <unordered_set>
+#include <tuple>
 
 
 int main(int argc, char *argv[]) {
 
 	using indices_type = std::vector<std::array<std::size_t, 4>>;
+	using param_type   = std::vector<float>;
+	using result_type  = std::tuple<indices_type, param_type, param_type>;
 
 	// parse command-line arguments
 	Input input(argc, argv);
@@ -20,16 +23,16 @@ int main(int argc, char *argv[]) {
 	Coordinate         coord = dcd_parser.read(input.trajectory_name(), -1);
 	// read black list
 	ForceFieldReader reader = ForceFieldReader();
-	const std::vector<std::array<std::size_t, 4>>& previous_pairs
-		= reader.read(input.base_ff_name());
+	const indices_type& previous_pairs = reader.read(input.base_ff_name());
 	// define contact pairs
 	ContactDetector detector = ContactDetector(input.seed());
-	indices_type indices_vec
+	result_type contact_data
 		= detector.run(coord, input.cutoff(), input.max_contact(), previous_pairs);
 	// dump the segment-parallelization parameters to the output file
 	ForceFieldWriter writer = ForceFieldWriter();
-	writer.dump(input.output_name(),
-		indices_vec, input.bond_k(), input.r0(), input.dihedral_k(), input.theta0());
+	writer.dump(input.output_name(), std::get<0>(contact_data), input.bond_k(),
+		input.r0(), input.sigma(), input.dihedral_k(),
+		std::get<1>(contact_data), std::get<2>(contact_data));
 
 	return 0;
 }

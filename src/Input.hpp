@@ -14,7 +14,7 @@ class Input {
 		float       bond_k()          const { return bond_k_; }
 		float       dihedral_k()      const { return dihedral_k_; }
 		float       r0()              const { return r0_; }
-		float       theta0()          const { return theta0_; }
+		float       sigma()           const { return sigma_; }
 		float       cutoff()          const { return cutoff_; }
 		int         seed()            const { return seed_; }
 		std::size_t max_contact()     const { return max_contact_; }
@@ -25,7 +25,7 @@ class Input {
 		float       bond_k_;
 		float       dihedral_k_;
 		float       r0_;
-		float       theta0_;
+		float       sigma_;
 		float       cutoff_;
 		int         seed_;
 		std::size_t max_contact_;

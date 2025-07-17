@@ -3,7 +3,7 @@
 #include <random>
 #include <unordered_set>
 
-ContactDetector::indices_type ContactDetector::run(
+ContactDetector::result_type ContactDetector::run(
 	const Coordinate& coordinate,
 	const float cutoff, const std::size_t max_contact,
 	const ContactDetector::indices_type& previous_pairs) const
@@ -11,7 +11,7 @@ ContactDetector::indices_type ContactDetector::run(
 	const ContactDetector::indices_type& contact_pair_list
 		= detect_contact_pairs(coordinate, cutoff, previous_pairs);
 	if (contact_pair_list.empty() or (contact_pair_list.size() <= max_contact))
-		return contact_pair_list;
+		return collect_indices_and_parameters(coordinate, contact_pair_list);
 
 	std::mt19937 engine(seed_);
 	const std::vector<std::size_t>& shuffled_indices
@@ -22,7 +22,7 @@ ContactDetector::indices_type ContactDetector::run(
 	{
 		retval.push_back(contact_pair_list[index]);
 	}
-	return retval;
+	return collect_indices_and_parameters(coordinate, retval);
 }
 
 ContactDetector::indices_type ContactDetector::detect_contact_pairs(
@@ -43,9 +43,6 @@ ContactDetector::indices_type ContactDetector::detect_contact_pairs(
 		for (std::size_t jdx = idx + 2; jdx < natom - 1; ++jdx)
 		{
 			if (black_list.find(jdx) != black_list.end()) continue;
-//			if ((coordinate.distance(idx, jdx) < cutoff) and
-//				(std::abs(coordinate.angle(idx + 1, idx, jdx) - phi0_) < phi_cutoff_) and
-//				(std::abs(coordinate.angle(idx, jdx, jdx + 1) - phi0_) < phi_cutoff_))
 			if (coordinate.distance(idx, jdx) < cutoff) 
 			{
 				retval.push_back({idx, idx + 1, jdx, jdx + 1});
@@ -55,4 +52,22 @@ ContactDetector::indices_type ContactDetector::detect_contact_pairs(
 		}
 	}
 	return retval;
+}
+
+ContactDetector::result_type ContactDetector::collect_indices_and_parameters(
+	const Coordinate& coordinate, const ContactDetector::indices_type& contact_pairs) const
+{
+	ContactDetector::param_type theta0s;
+	ContactDetector::param_type phi0s;
+	for (const auto& pair : contact_pairs)
+	{
+		const float theta = coordinate.dihedral(pair[1], pair[0], pair[2], pair[3]);
+		const float phi   = coordinate.angle(pair[1], pair[0], pair[2])
+						  - coordinate.angle(pair[0], pair[2], pair[3]);
+		if (theta > -0.5 * pi_ && theta < 0.5 * pi_) theta0s.push_back(0.0f);
+		else theta0s.push_back(pi_);
+		if (phi   > -0.5 * pi_ && phi   < 0.5 * pi_) phi0s.push_back(0.0f);
+		else phi0s.push_back(pi_);
+	}
+	return std::make_tuple(contact_pairs, theta0s, phi0s);
 }
