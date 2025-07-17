@@ -114,7 +114,7 @@ std::vector<float> DCDParser::read_coordinates(const std::string& block, const i
 	for (std::size_t iatom = 0; iatom < atom_num; ++iatom)
 	{
 		std::size_t pos_in_block = iatom * float_size;
-		coordinates[iatom] = Utility::read_binary_as<float>(&block.at(pos_in_block));
+		coordinates[iatom] = Utility::read_binary_as<float>(&block.at(pos_in_block)) * A2nm;
 	}
 	return coordinates;
 }

@@ -34,6 +34,7 @@ class DCDParser {
 		const int frame_num_index_ = 4;
 		const int unit_cell_index_ = 44;
 		const int atom_num_index_  = 0;
+		const float A2nm = 0.1;
 
 };
 
