@@ -15,7 +15,7 @@ Input::Input(int argc, char *argv[])
 		("bond, b",     boost_po::value<float>()->default_value(1.0),    "bond strength")
 		("sigma, w",   boost_po::value<float>()->default_value(  1.0),    "native torsion angle")
 		("r0, r",       boost_po::value<float>()->default_value( 10.0),    "native bond length")
-		("dihedral, d", boost_po::value<float>()->default_value(0.174533),    "dihedral strength")
+		("dihedral, d", boost_po::value<float>()->default_value(1.0),    "dihedral strength")
 		("seed, s",     boost_po::value<int>()->default_value(-1),         "random seed")
 		("maxcon, x",   boost_po::value<std::size_t>()->default_value(100),"max contact number");
 	boost_po::variables_map vm;
