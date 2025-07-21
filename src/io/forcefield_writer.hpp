@@ -15,7 +15,7 @@ class ForceFieldWriter
 		~ForceFieldWriter() = default;
 		void dump(
 			const std::string& filename, const indices_type& indices_vec,
-			const float bond_k, const float r0, const float sigma,
+			const float bond_k, const param_type& r0s, const float sigma,
 			const float dihedral_k, const param_type& theta0s, const param_type& phi0s);
 
 };

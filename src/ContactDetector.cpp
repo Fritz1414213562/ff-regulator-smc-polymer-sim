@@ -59,15 +59,18 @@ ContactDetector::result_type ContactDetector::collect_indices_and_parameters(
 {
 	ContactDetector::param_type theta0s;
 	ContactDetector::param_type phi0s;
+	ContactDetector::param_type r0s;
 	for (const auto& pair : contact_pairs)
 	{
+		const float r = coordinate.distance(pair[0], pair[2]);
 		const float theta = coordinate.dihedral(pair[1], pair[0], pair[2], pair[3]);
 		const float phi   = coordinate.angle(pair[1], pair[0], pair[2])
 						  - coordinate.angle(pair[0], pair[2], pair[3]);
+		r0s.push_back(r);
 		if (theta > -0.5 * pi_ && theta < 0.5 * pi_) theta0s.push_back(0.0f);
 		else theta0s.push_back(pi_);
 		if (phi   > -0.5 * pi_ && phi   < 0.5 * pi_) phi0s.push_back(0.0f);
 		else phi0s.push_back(pi_);
 	}
-	return std::make_tuple(contact_pairs, theta0s, phi0s);
+	return std::make_tuple(contact_pairs, theta0s, phi0s, r0s);
 }

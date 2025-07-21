@@ -14,7 +14,7 @@ int main(int argc, char *argv[]) {
 
 	using indices_type = std::vector<std::array<std::size_t, 4>>;
 	using param_type   = std::vector<float>;
-	using result_type  = std::tuple<indices_type, param_type, param_type>;
+	using result_type  = std::tuple<indices_type, param_type, param_type, param_type>;
 
 	// parse command-line arguments
 	Input input(argc, argv);
@@ -31,7 +31,7 @@ int main(int argc, char *argv[]) {
 	// dump the segment-parallelization parameters to the output file
 	ForceFieldWriter writer = ForceFieldWriter();
 	writer.dump(input.output_name(), std::get<0>(contact_data), input.bond_k(),
-		input.r0(), input.sigma(), input.dihedral_k(),
+		std::get<3>(contact_data), input.sigma(), input.dihedral_k(),
 		std::get<1>(contact_data), std::get<2>(contact_data));
 
 	return 0;

@@ -11,7 +11,7 @@ class ContactDetector
 {
 	using indices_type = std::vector<std::array<std::size_t, 4>>;
 	using param_type   = std::vector<float>;
-	using result_type  = std::tuple<indices_type, param_type, param_type>;
+	using result_type  = std::tuple<indices_type, param_type, param_type, param_type>;
 
 	public:
 		ContactDetector(const int seed) : seed_(seed) {}
