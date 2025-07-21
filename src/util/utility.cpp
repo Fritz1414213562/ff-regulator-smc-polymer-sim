@@ -9,7 +9,7 @@ namespace Utility
 {
 
 std::vector<std::size_t> fisher_yates_random_choice(
-	const std::size_t size, std::size_t lower, std::size_t upper, std::mt19937& engine)
+	const std::size_t size, std::size_t lower, std::size_t upper, std::mt19937_64& engine)
 {
 	if (lower > upper) std::swap(lower, upper);
 	if (upper - lower + 1 < size) throw std::runtime_error(

@@ -69,7 +69,7 @@ std::array<T, 3> cross_product(const std::array<T, 3>& lhs, const std::array<T, 
 }
 
 std::vector<std::size_t> fisher_yates_random_choice(
-	const std::size_t size, std::size_t lower, std::size_t upper, std::mt19937& engine);
+	const std::size_t size, std::size_t lower, std::size_t upper, std::mt19937_64& engine);
 
 }
 

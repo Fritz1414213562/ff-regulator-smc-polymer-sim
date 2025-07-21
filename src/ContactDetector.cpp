@@ -13,7 +13,7 @@ ContactDetector::result_type ContactDetector::run(
 	if (contact_pair_list.empty() or (contact_pair_list.size() <= max_contact))
 		return collect_indices_and_parameters(coordinate, contact_pair_list);
 
-	std::mt19937 engine(seed_);
+	std::mt19937_64 engine(seed_);
 	const std::vector<std::size_t>& shuffled_indices
 		= Utility::fisher_yates_random_choice(
 			max_contact, 0, contact_pair_list.size() - 1, engine);
