@@ -13,8 +13,7 @@ Input::Input(int argc, char *argv[])
 		("output, o",   boost_po::value<std::string>(), "path to output")
 		("cutoff, c",   boost_po::value<float>()->default_value(12.0),    "cutoff length")
 		("bond, b",     boost_po::value<float>()->default_value(1.0),    "bond strength")
-		("sigma, w",   boost_po::value<float>()->default_value(  1.0),    "native torsion angle")
-		("r0, r",       boost_po::value<float>()->default_value( 10.0),    "native bond length")
+		("sigma, w",   boost_po::value<float>()->default_value(  1.0),    "bond width")
 		("dihedral, d", boost_po::value<float>()->default_value(1.0),    "dihedral strength")
 		("seed, s",     boost_po::value<int>()->default_value(-1),         "random seed")
 		("maxcon, x",   boost_po::value<std::size_t>()->default_value(100),"max contact number");
@@ -40,7 +39,6 @@ Input::Input(int argc, char *argv[])
 	this->cutoff_          = vm["cutoff"].as<float>();
 	this->bond_k_          = vm["bond"].as<float>();
 	this->sigma_           = vm["sigma"].as<float>();
-	this->r0_              = vm["r0"].as<float>();
 	this->dihedral_k_      = vm["dihedral"].as<float>();
 	if (vm["seed"].as<int>() < 0)
 	{
