@@ -5,11 +5,11 @@
 
 ContactDetector::result_type ContactDetector::run(
 	const Coordinate& coordinate,
-	const float cutoff, const std::size_t max_contact,
-	const ContactDetector::indices_type& previous_pairs) const
+	const float cutoff, const std::size_t ignore_num,
+	const std::size_t max_contact, const ContactDetector::indices_type& previous_pairs) const
 {
 	const ContactDetector::indices_type& contact_pair_list
-		= detect_contact_pairs(coordinate, cutoff, previous_pairs);
+		= detect_contact_pairs(coordinate, cutoff, ignore_num, previous_pairs);
 	if (contact_pair_list.empty() or (contact_pair_list.size() <= max_contact))
 		return collect_indices_and_parameters(coordinate, contact_pair_list);
 
@@ -27,8 +27,14 @@ ContactDetector::result_type ContactDetector::run(
 
 ContactDetector::indices_type ContactDetector::detect_contact_pairs(
 	const Coordinate& coordinate, const float cutoff,
-	const ContactDetector::indices_type& previous_pairs) const
+	const std::size_t ignore_num, const ContactDetector::indices_type& previous_pairs) const
 {
+	const std::size_t& natom = coordinate.atom_num();
+	if (ignore_num < 2)
+		throw std::runtime_error("[error] 'ignore_num' must be 2 or more.");
+	else if (natom < ignore_num + 1)
+		throw std::runtime_error("[error] 'ignore_num' must be smaller than n_atoms.");
+
 	ContactDetector::indices_type retval(previous_pairs);
 	std::unordered_set<std::size_t> black_list;
 	for (const auto& pair : previous_pairs)
@@ -36,11 +42,10 @@ ContactDetector::indices_type ContactDetector::detect_contact_pairs(
 		black_list.insert(pair[0]);
 		black_list.insert(pair[2]);
 	}
-	const std::size_t& natom = coordinate.atom_num();
-	for (std::size_t idx = 0; idx < natom - 3; ++idx)
+	for (std::size_t idx = 0; idx < natom - ignore_num - 1; ++idx)
 	{
 		if (black_list.find(idx) != black_list.end()) continue;
-		for (std::size_t jdx = idx + 2; jdx < natom - 1; ++jdx)
+		for (std::size_t jdx = idx + ignore_num; jdx < natom - 1; ++jdx)
 		{
 			if (black_list.find(jdx) != black_list.end()) continue;
 			if (coordinate.distance(idx, jdx) < cutoff) 

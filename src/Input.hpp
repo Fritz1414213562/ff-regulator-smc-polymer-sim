@@ -17,6 +17,7 @@ class Input {
 		float       cutoff()          const { return cutoff_; }
 		int         seed()            const { return seed_; }
 		std::size_t max_contact()     const { return max_contact_; }
+		std::size_t ignore_num()      const { return ignore_num_; }
 	private:
 		std::string trajectory_name_;
 		std::string base_ff_name_;
@@ -27,6 +28,7 @@ class Input {
 		float       cutoff_;
 		int         seed_;
 		std::size_t max_contact_;
+		std::size_t ignore_num_;
 };
 
 #endif // MONTE_CARLO_FF_REGULATOR_INPUT_HPP

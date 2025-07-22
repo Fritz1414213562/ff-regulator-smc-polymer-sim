@@ -17,12 +17,13 @@ class ContactDetector
 		ContactDetector(const int seed) : seed_(seed) {}
 		~ContactDetector() = default;
 		result_type run(const Coordinate& coordinate,
-			const float cutoff, const std::size_t max_contact,
-			const indices_type& previous_pairs) const;
+			const float cutoff, const std::size_t ignore_num,
+			const std::size_t max_contact, const indices_type& previous_pairs) const;
 
 	private:
 		indices_type detect_contact_pairs(const Coordinate& coordinate,
-			const float cutoff, const indices_type& previous_pairs) const;
+			const float cutoff, const std::size_t ignore_num,
+			const indices_type& previous_pairs) const;
 		result_type  collect_indices_and_parameters(
 			const Coordinate& coordinate, const indices_type& contact_pairs) const;
 

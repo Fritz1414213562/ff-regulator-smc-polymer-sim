@@ -13,10 +13,11 @@ Input::Input(int argc, char *argv[])
 		("output, o",   boost_po::value<std::string>(), "path to output")
 		("cutoff, c",   boost_po::value<float>()->default_value(12.0),    "cutoff length")
 		("bond, b",     boost_po::value<float>()->default_value(1.0),    "bond strength")
-		("sigma, w",   boost_po::value<float>()->default_value(  1.0),    "bond width")
+		("sigma, w",    boost_po::value<float>()->default_value(  1.0),    "bond width")
 		("dihedral, d", boost_po::value<float>()->default_value(1.0),    "dihedral strength")
 		("seed, s",     boost_po::value<int>()->default_value(-1),         "random seed")
-		("maxcon, x",   boost_po::value<std::size_t>()->default_value(100),"max contact number");
+		("maxcon, x",   boost_po::value<std::size_t>()->default_value(100),"max contact number")
+		("ignore, i",   boost_po::value<std::size_t>()->default_value(5), "how many beads to ignore for contact pair");
 	boost_po::variables_map vm;
 	try
 	{
@@ -47,4 +48,5 @@ Input::Input(int argc, char *argv[])
 	}
 	else this->seed_       = vm["seed"].as<int>();
 	this->max_contact_     = vm["maxcon"].as<std::size_t>();
+	this->ignore_num_      = vm["ignore"].as<std::size_t>();
 }
