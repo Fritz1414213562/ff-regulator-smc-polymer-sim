@@ -35,12 +35,18 @@ ContactDetector::indices_type ContactDetector::detect_contact_pairs(
 	else if (natom < ignore_num + 1)
 		throw std::runtime_error("[error] 'ignore_num' must be smaller than n_atoms.");
 
-	ContactDetector::indices_type retval(previous_pairs);
+	ContactDetector::indices_type retval;
 	std::unordered_set<std::size_t> black_list;
 	for (const auto& pair : previous_pairs)
 	{
-		black_list.insert(pair[0]);
-		black_list.insert(pair[2]);
+		const std::size_t& idx = pair[0];
+		const std::size_t& jdx = pair[2];
+		if (coordinate.distance(idx, jdx) < cutoff)
+		{
+			retval.push_back({idx, idx + 1, jdx, jdx + 1});
+			black_list.insert(idx);
+			black_list.insert(jdx);
+		}
 	}
 	for (std::size_t idx = 0; idx < natom - ignore_num - 1; ++idx)
 	{
