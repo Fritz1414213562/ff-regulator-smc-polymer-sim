@@ -7,6 +7,7 @@
 #include <tuple>
 #include <cmath>
 #include <utility>
+#include <random>
 
 class ContactDetector
 {
@@ -25,7 +26,7 @@ class ContactDetector
 	private:
 		ff_type detect_contact_pairs(const Coordinate& coordinate,
 			const float cutoff, const std::size_t ignore_num,
-			const ff_type& previous_ff) const;
+			const ff_type& previous_ff, std::mt19937_64& engine) const;
 		//result_type  collect_indices_and_parameters(
 		//	const Coordinate& coordinate, const ff_type& contact_pairs) const;
 

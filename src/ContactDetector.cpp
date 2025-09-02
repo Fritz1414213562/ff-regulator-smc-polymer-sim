@@ -1,6 +1,5 @@
 #include "ContactDetector.hpp"
 #include "src/util/utility.hpp"
-#include <random>
 #include <unordered_set>
 
 ContactDetector::result_type ContactDetector::run(
@@ -8,8 +7,9 @@ ContactDetector::result_type ContactDetector::run(
 	const float cutoff, const std::size_t ignore_num,
 	const std::size_t max_contact, const ContactDetector::ff_type& previous_ff) const
 {
+	std::mt19937_64 engine(seed_);
 	const ContactDetector::ff_type& contact_pair_data
-		= detect_contact_pairs(coordinate, cutoff, ignore_num, previous_ff);
+		= detect_contact_pairs(coordinate, cutoff, ignore_num, previous_ff, engine);
 	if (contact_pair_data.first.size() != contact_pair_data.second.size())
 		throw std::runtime_error(
 			"[error] The parameter number of indices must be the same as that of native-distance");
@@ -20,7 +20,6 @@ ContactDetector::result_type ContactDetector::run(
 			std::vector<float>(contact_pair_data.first.size(), phi0_),
 			contact_pair_data.second);
 
-	std::mt19937_64 engine(seed_);
 	const std::vector<std::size_t>& shuffled_indices
 		= Utility::fisher_yates_random_choice(
 			max_contact, 0, contact_pair_data.first.size() - 1, engine);
@@ -36,8 +35,8 @@ ContactDetector::result_type ContactDetector::run(
 }
 
 ContactDetector::ff_type ContactDetector::detect_contact_pairs(
-	const Coordinate& coordinate, const float cutoff,
-	const std::size_t ignore_num, const ContactDetector::ff_type& previous_ff) const
+	const Coordinate& coordinate, const float cutoff, const std::size_t ignore_num,
+	const ContactDetector::ff_type& previous_ff, std::mt19937_64& engine) const
 {
 	const std::size_t& natom = coordinate.atom_num();
 	if (ignore_num < 2)
@@ -66,17 +65,38 @@ ContactDetector::ff_type ContactDetector::detect_contact_pairs(
 	for (std::size_t idx = 0; idx < natom - ignore_num - 1; ++idx)
 	{
 		if (black_list.find(idx) != black_list.end()) continue;
+		std::vector<std::size_t> j_indices;
+		std::vector<float> dists;
 		for (std::size_t jdx = idx + ignore_num; jdx < natom - 1; ++jdx)
 		{
 			if (black_list.find(jdx) != black_list.end()) continue;
 			const float& dist = coordinate.distance(idx, jdx);
-			if (dist < cutoff) 
+			if (dist < cutoff)
 			{
-				contact_indices.push_back({idx, idx + 1, jdx, jdx + 1});
-				native_distances.push_back(dist);
-				black_list.insert(idx);
-				black_list.insert(jdx);
+				j_indices.push_back(jdx);
+				dists.push_back(dist);
 			}
+		}
+		if (j_indices.size() < 1) continue;
+		else if (j_indices.size() == 1)
+		{
+			const std::size_t& jdx = j_indices[0];
+			const float& dist = dists[0];
+			contact_indices.push_back({idx, idx + 1, jdx, jdx + 1});
+			native_distances.push_back(dist);
+			black_list.insert(idx);
+			black_list.insert(jdx);
+		}
+		else
+		{
+			std::uniform_int_distribution<> uni_dist(0, j_indices.size() - 1);
+			const std::size_t& ipair = uni_dist(engine);
+			const std::size_t& jdx = j_indices[ipair];
+			const float& dist = dists[ipair];
+			contact_indices.push_back({idx, idx + 1, jdx, jdx + 1});
+			native_distances.push_back(dist);
+			black_list.insert(idx);
+			black_list.insert(jdx);
 		}
 	}
 	return std::make_pair(contact_indices, native_distances);
