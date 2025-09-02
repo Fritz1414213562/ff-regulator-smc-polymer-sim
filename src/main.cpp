@@ -8,12 +8,14 @@
 #include <array>
 #include <unordered_set>
 #include <tuple>
+#include <utility>
 
 
 int main(int argc, char *argv[]) {
 
 	using indices_type = std::vector<std::array<std::size_t, 4>>;
 	using param_type   = std::vector<float>;
+	using ff_type      = std::pair<indices_type, param_type>;
 	using result_type  = std::tuple<indices_type, param_type, param_type, param_type>;
 
 	// parse command-line arguments
@@ -23,7 +25,7 @@ int main(int argc, char *argv[]) {
 	Coordinate         coord = dcd_parser.read(input.trajectory_name(), -1);
 	// read black list
 	ForceFieldReader reader = ForceFieldReader();
-	const indices_type& previous_pairs = reader.read(input.base_ff_name());
+	const ff_type& previous_pairs = reader.read(input.base_ff_name());
 	// define contact pairs
 	ContactDetector detector = ContactDetector(input.seed());
 	result_type contact_data
