@@ -29,7 +29,8 @@ int main(int argc, char *argv[]) {
 	// define contact pairs
 	ContactDetector detector = ContactDetector(input.seed());
 	result_type contact_data
-		= detector.run(coord, input.cutoff(), input.ignore_num(), input.max_contact(), previous_pairs);
+		= detector.run(coord, input.sigma(), input.cutoff(),
+			input.ignore_num(), input.max_contact(), previous_pairs);
 	// dump the segment-parallelization parameters to the output file
 	ForceFieldWriter writer = ForceFieldWriter();
 	writer.dump(input.output_name(), std::get<0>(contact_data), input.bond_k(),

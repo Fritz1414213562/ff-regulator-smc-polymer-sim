@@ -3,13 +3,13 @@
 #include <unordered_set>
 
 ContactDetector::result_type ContactDetector::run(
-	const Coordinate& coordinate,
+	const Coordinate& coordinate, const float sigma,
 	const float cutoff, const std::size_t ignore_num,
 	const std::size_t max_contact, const ContactDetector::ff_type& previous_ff) const
 {
 	std::mt19937_64 engine(seed_);
 	const ContactDetector::ff_type& contact_pair_data
-		= detect_contact_pairs(coordinate, cutoff, ignore_num, previous_ff, engine);
+		= detect_contact_pairs(coordinate, sigma, cutoff, ignore_num, previous_ff, engine);
 	if (contact_pair_data.first.size() != contact_pair_data.second.size())
 		throw std::runtime_error(
 			"[error] The parameter number of indices must be the same as that of native-distance");
@@ -35,8 +35,9 @@ ContactDetector::result_type ContactDetector::run(
 }
 
 ContactDetector::ff_type ContactDetector::detect_contact_pairs(
-	const Coordinate& coordinate, const float cutoff, const std::size_t ignore_num,
-	const ContactDetector::ff_type& previous_ff, std::mt19937_64& engine) const
+	const Coordinate& coordinate, const float sigma, const float cutoff,
+	const std::size_t ignore_num, const ContactDetector::ff_type& previous_ff,
+	std::mt19937_64& engine) const
 {
 	const std::size_t& natom = coordinate.atom_num();
 	if (ignore_num < 2)
@@ -50,14 +51,13 @@ ContactDetector::ff_type ContactDetector::detect_contact_pairs(
 	for (std::size_t ipair = 0; ipair < previous_ff.first.size(); ++ipair)
 	{
 		const auto& pair = previous_ff.first[ipair];
-		const auto& native_distance = previous_ff.second[ipair];
 		const std::size_t& idx = pair[0];
 		const std::size_t& jdx = pair[2];
 		const float& dist = coordinate.distance(idx, jdx);
-		if (dist < cutoff)
+		if ((dist < cutoff + 2 * sigma) and (cutoff - 2 * sigma < dist))
 		{
 			contact_indices.push_back({idx, idx + 1, jdx, jdx + 1});
-			native_distances.push_back(native_distance);
+			native_distances.push_back(cutoff);
 			black_list.insert(idx);
 			black_list.insert(jdx);
 		}
@@ -66,24 +66,21 @@ ContactDetector::ff_type ContactDetector::detect_contact_pairs(
 	{
 		if (black_list.find(idx) != black_list.end()) continue;
 		std::vector<std::size_t> j_indices;
-		std::vector<float> dists;
 		for (std::size_t jdx = idx + ignore_num; jdx < natom - 1; ++jdx)
 		{
 			if (black_list.find(jdx) != black_list.end()) continue;
 			const float& dist = coordinate.distance(idx, jdx);
-			if (dist < cutoff)
+			if ((dist < cutoff + 2 * sigma) and (cutoff - 2 * sigma < dist))
 			{
 				j_indices.push_back(jdx);
-				dists.push_back(dist);
 			}
 		}
 		if (j_indices.size() < 1) continue;
 		else if (j_indices.size() == 1)
 		{
 			const std::size_t& jdx = j_indices[0];
-			const float& dist = dists[0];
 			contact_indices.push_back({idx, idx + 1, jdx, jdx + 1});
-			native_distances.push_back(dist);
+			native_distances.push_back(cutoff);
 			black_list.insert(idx);
 			black_list.insert(jdx);
 		}
@@ -92,9 +89,8 @@ ContactDetector::ff_type ContactDetector::detect_contact_pairs(
 			std::uniform_int_distribution<> uni_dist(0, j_indices.size() - 1);
 			const std::size_t& ipair = uni_dist(engine);
 			const std::size_t& jdx = j_indices[ipair];
-			const float& dist = dists[ipair];
 			contact_indices.push_back({idx, idx + 1, jdx, jdx + 1});
-			native_distances.push_back(dist);
+			native_distances.push_back(cutoff);
 			black_list.insert(idx);
 			black_list.insert(jdx);
 		}

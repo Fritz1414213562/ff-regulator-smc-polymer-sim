@@ -19,12 +19,12 @@ class ContactDetector
 	public:
 		ContactDetector(const int seed) : seed_(seed) {}
 		~ContactDetector() = default;
-		result_type run(const Coordinate& coordinate,
+		result_type run(const Coordinate& coordinate, const float sigma,
 			const float cutoff, const std::size_t ignore_num,
 			const std::size_t max_contact, const ff_type& previous_ff) const;
 
 	private:
-		ff_type detect_contact_pairs(const Coordinate& coordinate,
+		ff_type detect_contact_pairs(const Coordinate& coordinate, const float sigma,
 			const float cutoff, const std::size_t ignore_num,
 			const ff_type& previous_ff, std::mt19937_64& engine) const;
 		//result_type  collect_indices_and_parameters(
