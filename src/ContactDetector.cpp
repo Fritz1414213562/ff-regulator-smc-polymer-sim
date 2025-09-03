@@ -59,7 +59,9 @@ ContactDetector::ff_type ContactDetector::detect_contact_pairs(
 			contact_indices.push_back({idx, idx + 1, jdx, jdx + 1});
 			native_distances.push_back(cutoff);
 			black_list.insert(idx);
+			black_list.insert(idx + 1);
 			black_list.insert(jdx);
+			black_list.insert(jdx + 1);
 		}
 	}
 	for (std::size_t idx = 0; idx < natom - ignore_num - 1; ++idx)
@@ -82,7 +84,9 @@ ContactDetector::ff_type ContactDetector::detect_contact_pairs(
 			contact_indices.push_back({idx, idx + 1, jdx, jdx + 1});
 			native_distances.push_back(cutoff);
 			black_list.insert(idx);
+			black_list.insert(idx + 1);
 			black_list.insert(jdx);
+			black_list.insert(jdx + 1);
 		}
 		else
 		{
@@ -92,7 +96,9 @@ ContactDetector::ff_type ContactDetector::detect_contact_pairs(
 			contact_indices.push_back({idx, idx + 1, jdx, jdx + 1});
 			native_distances.push_back(cutoff);
 			black_list.insert(idx);
+			black_list.insert(idx + 1);
 			black_list.insert(jdx);
+			black_list.insert(jdx + 1);
 		}
 	}
 	return std::make_pair(contact_indices, native_distances);
